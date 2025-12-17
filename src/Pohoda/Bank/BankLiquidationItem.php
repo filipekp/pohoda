@@ -14,16 +14,13 @@
    */
   class BankLiquidationItem extends DocumentItem
   {
+    protected $_nodePrefix = 'bankLiquidation';
+    
     /** @var string[] */
     protected $_elements = ['settingsLiquidation', 'liquidationItem'];
     
     protected function _configureOptions(OptionsResolver $resolver)
     {
       parent::_configureOptions($resolver);
-    }
-    
-    protected function _getNodeName(): string
-    {
-      return 'bnk:bankLiquidationItem';
     }
   }

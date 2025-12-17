@@ -9,6 +9,9 @@
   
   class LiquidationItem extends DocumentItem
   {
+    /** @var string */
+    protected $_nodePrefix = 'liquidation';
+    
     /** @var string[] */
     protected $_elements = ['quantity', 'homeCurrency', 'foreignCurrency'];
     
@@ -17,10 +20,5 @@
       parent::_configureOptions($resolver);
       
       $resolver->setNormalizer('quantity', $resolver->getNormalizer('float'));
-    }
-    
-    protected function _getNodeName(): string
-    {
-      return 'bnk:liquidationItem';
     }
   }

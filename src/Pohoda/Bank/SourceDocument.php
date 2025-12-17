@@ -5,17 +5,15 @@
   namespace Riesenia\Pohoda\Bank;
   
   use Riesenia\Pohoda\Common\OptionsResolver;
-  use Riesenia\Pohoda\Document\Item as DocumentItem;
+  use Riesenia\Pohoda\Document\Part;
   
-  class SourceDocument extends DocumentItem
+  class SourceDocument extends Part
   {
-    /** @var string[] */
     protected $_elements = ['number'];
     
     protected function _configureOptions(OptionsResolver $resolver)
     {
-      parent::_configureOptions($resolver);
-      
+      $resolver->setDefined(['number']);
       $resolver->setNormalizer('number', $resolver->getNormalizer('string32'));
     }
     
@@ -24,12 +22,20 @@
       return 'bnk:sourceDocument';
     }
     
-    protected function _getElementName(string $key): string
+    public function getXML(): \SimpleXMLElement
     {
-      if ($key === 'number') {
-        return 'typ:number';
+      $data = $this->_data ?? [];
+      
+      $xml = $this->_createXML()->addChild(
+        'bnk:sourceDocument',
+        '',
+        $this->_namespace('bnk')
+      );
+      
+      if (isset($data['number'])) {
+        $xml->addChild('typ:number', (string) $data['number'], $this->_namespace('typ'));
       }
       
-      return parent::_getElementName($key);
+      return $xml;
     }
   }

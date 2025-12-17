@@ -12,6 +12,7 @@
   use Riesenia\Pohoda\Bank\BankLiquidationItem;
   use Riesenia\Pohoda\Bank\LiquidationItem;
   use Riesenia\Pohoda\Bank\SettingsLiquidation;
+  use Riesenia\Pohoda\Bank\SourceDocument;
   
   class Bank extends Document
   {
@@ -31,10 +32,35 @@
         $this->_data['bankDetail'] = [];
       }
       
-      $this->_data['bankDetail'][] = new BankLiquidationItem([
-        'settingsLiquidation' => new SettingsLiquidation($data['settingsLiquidation'], $this->_ico),
-        'liquidationItem' => new LiquidationItem($data['liquidationItem'], $this->_ico),
+      // sourceDocument (Part)
+      $sourceDocument = new SourceDocument(
+        $data['settingsLiquidation']['sourceDocument'],
+        $this->_ico
+      );
+      $sourceDocument->setNamespace('bnk'); // 🔥 KLÍČOVÉ
+      
+      // settingsLiquidation (Part)
+      $settings = new SettingsLiquidation([
+        'sourceAgenda' => $data['settingsLiquidation']['sourceAgenda'],
+        'sourceDocument' => $sourceDocument,
       ], $this->_ico);
+      $settings->setNamespace('bnk'); // 🔥 KLÍČOVÉ
+      
+      // liquidationItem (Document\Item)
+      $liquidationItem = new LiquidationItem(
+        $data['liquidationItem'],
+        $this->_ico
+      );
+      $liquidationItem->setNamespace('bnk');
+      
+      // bankLiquidationItem (Document\Item)
+      $item = new BankLiquidationItem([
+        'settingsLiquidation' => $settings,
+        'liquidationItem' => $liquidationItem,
+      ], $this->_ico);
+      $item->setNamespace('bnk');
+      
+      $this->_data['bankDetail'][] = $item;
       
       return $this;
     }
