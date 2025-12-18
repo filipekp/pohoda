@@ -43,7 +43,24 @@
           $hcXml = $this->_createXML()->addChild('bnk:homeCurrency', '', $this->_namespace('bnk'));
           
           if (isset($hc['unitPrice'])) {
-            $hcXml->addChild('typ:unitPrice', (string)round($hc['unitPrice'], 2), $this->_namespace('bnk'));
+            $hcXml->addChild('bnk:unitPrice', (string)round($hc['unitPrice'], 2), $this->_namespace('bnk'));
+          }
+          
+          $this->_appendNode($xml, $hcXml);
+        }
+      }
+      
+      if (isset($data['foreignCurrency'])) {
+        $hc = $data['foreignCurrency'];
+        
+        // pokud ti tam přijde SourceDocument objekt, vezmeme jeho XML a připojíme
+        if (\is_object($hc) && \method_exists($hc, 'getXML')) {
+          $this->_appendNode($xml, $hc->getXML());
+        } else {
+          $hcXml = $this->_createXML()->addChild('bnk:foreignCurrency', '', $this->_namespace('bnk'));
+          
+          if (isset($hc['unitPrice'])) {
+            $hcXml->addChild('bnk:unitPrice', (string)round($hc['unitPrice'], 2), $this->_namespace('bnk'));
           }
           
           $this->_appendNode($xml, $hcXml);
